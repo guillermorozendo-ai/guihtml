@@ -1,230 +1,26 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-width=1.0">
-    <title>Apunte Marcos - Autoevaluación de Psicología Médica</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f7f6;
-            color: #333;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        h1, h2, h3 {
-            color: #2c3e50;
-        }
-        .section {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-        .question {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        textarea {
-            width: 100%;
-            height: 60px;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            resize: vertical;
-        }
-        .mcq-option, .tf-option {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: normal;
-        }
-        .mcq-option input, .tf-option input {
-            margin-right: 10px;
-        }
-        .btn-submit {
-            background-color: #3498db;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        .btn-submit:hover {
-            background-color: #2980b9;
-        }
-        .result {
-            display: none;
-            padding: 15px;
-            margin-top: 20px;
-            border-radius: 4px;
-            font-weight: bold;
-        }
-        .correct { color: #27ae60; }
-        .incorrect { color: #c0392b; }
-        .justification { margin-top: 10px; display: none; }
-    </style>
+<meta charset="UTF-8">
+<title>Apunte Marcos</title>
 </head>
 <body>
 
-    <h1>Apunte Marcos - Práctica de Examen</h1>
-    <p>Materia: Psicología Médica y Psicopatología.</p>
+<h1>📚 Apunte Marcos - Práctica de Examen</h1>
+<p>Psicología Médica y Psicopatología</p>
 
-    <div class="section">
-        <h2>I. Define claramente los términos [cite: 2]</h2>
-        <div class="question">
-            <label>1. Psicología[cite: 4]:</label>
-            <textarea placeholder="Escribe tu definición aquí..."></textarea>
-        </div>
-        <div class="question">
-            <label>2. Psicopatología[cite: 5]:</label>
-            <textarea placeholder="Escribe tu definición aquí..."></textarea>
-        </div>
-        <div class="question">
-            <label>3. Inteligencia[cite: 6]:</label>
-            <textarea placeholder="Escribe tu definición aquí..."></textarea>
-        </div>
-    </div>
+<nav>
+  <a href="definiciones.html">Definiciones</a> |
+  <a href="verdadero.html">Verdadero/Falso</a> |
+  <a href="multiple.html">Multiple Choice</a>
+</nav>
 
-    <div class="section">
-        <h2>II. Cita [cite: 7, 58]</h2>
-        <div class="question">
-            <label>1. Los 2 tipos de la psicología[cite: 8]:</label>
-            <textarea></textarea>
-        </div>
-        <div class="question">
-            <label>2. Las 2 corrientes psicológicas[cite: 9]:</label>
-            <textarea></textarea>
-        </div>
-        <div class="question">
-            <label>3. Los 2 tipos de mecanismo de defensas[cite: 10]:</label>
-            <textarea></textarea>
-        </div>
-        <div class="question">
-            <label>4. 2 Tipos de Temperamentos relacionados con la personalidad[cite: 11]:</label>
-            <textarea></textarea>
-        </div>
-    </div>
+<h2>Elegir sección:</h2>
+<ul>
+  <li><a href="definiciones.html">I y II - Definiciones y Citas</a></li>
+  <li><a href="verdadero.html">III - Verdadero/Falso</a></li>
+  <li><a href="multiple.html">IV - Multiple Choice</a></li>
+</ul>
 
-    <form id="quizForm">
-        <div class="section">
-            <h2>III. Contesta con Verdadero (V) y Falso (F) </h2>
-            <p><i>Justifica adecuadamente las falsas.</i> </p>
-            
-            <div class="question" id="q_vf1">
-                <label>1. La psicología proviene del griego psique o psyché, que significa alma, psique o actividad mental, y logía, que significa estudio o tratado, por tanto, psicología significa estudio o tratado del alma. [cite: 16]</label>
-                <label class="tf-option"><input type="radio" name="vf1" value="V"> Verdadero [cite: 18]</label>
-                <label class="tf-option"><input type="radio" name="vf1" value="F" onchange="toggleJustification('just_vf1', this)"> Falso [cite: 21]</label>
-                <textarea id="just_vf1" class="justification" placeholder="Justifica tu respuesta..."></textarea>
-            </div>
-
-            <div class="question" id="q_vf2">
-                <label>2. Lo que comemos no solo afecta a cómo nos sentimos, sino que cómo nos sentimos también afecta a nuestra manera de comer. [cite: 19, 20]</label>
-                <label class="tf-option"><input type="radio" name="vf2" value="V"> Verdadero</label>
-                <label class="tf-option"><input type="radio" name="vf2" value="F" onchange="toggleJustification('just_vf2', this)"> Falso</label>
-                <textarea id="just_vf2" class="justification" placeholder="Justifica tu respuesta..."></textarea>
-            </div>
-
-            <div class="question" id="q_vf3">
-                <label>3. Comer por el paladar es una conducta que tiene que ver con el placer y, por tanto, entra en juego el sistema de recompensa, mediado por la dopamina. [cite: 22]</label>
-                <label class="tf-option"><input type="radio" name="vf3" value="V"> Verdadero [cite: 24]</label>
-                <label class="tf-option"><input type="radio" name="vf3" value="F" onchange="toggleJustification('just_vf3', this)"> Falso [cite: 25]</label>
-                <textarea id="just_vf3" class="justification" placeholder="Justifica tu respuesta..."></textarea>
-            </div>
-        </div>
-
-        <div class="section">
-            <h2>IV. Marca la letra de la respuesta correcta </h2>
-            
-            <div class="question" id="q_mc1">
-                <label>1. Según el DSM V la presencia de ataque de pánico recurrente e inesperado, seguido al menos 1 mes de preocupación persistente, cambios en el comportamiento significativos relacionan al ataque de pánico en su diagnóstico. [cite: 70]</label>
-                <label class="mcq-option"><input type="radio" name="mc1" value="A"> a. Verdadero [cite: 71]</label>
-                <label class="mcq-option"><input type="radio" name="mc1" value="B"> b. Falso [cite: 72]</label>
-            </div>
-
-            <div class="question" id="q_mc2">
-                <label>2. Es un temor extremo, irracional y perdurable evitación de las situaciones sociales o de desempeño social, los individuos son por lo general dolorosamente tímidos. [cite: 87, 88]</label>
-                <label class="mcq-option"><input type="radio" name="mc2" value="A"> A. FOBIA ESPECIFICA [cite: 89]</label>
-                <label class="mcq-option"><input type="radio" name="mc2" value="B"> B. FOBIA SOCIAL [cite: 90]</label>
-                <label class="mcq-option"><input type="radio" name="mc2" value="C"> C. A Y B SON CORRECTAS [cite: 91]</label>
-            </div>
-
-            <div class="question" id="q_mc3">
-                <label>3. El PANICO NOCTURNO es aquel trastorno que se manifiesta durante el sueño profundo, ocurre con mayor frecuencia entre 1:30 a 3:30 am de la madrugada. [cite: 96]</label>
-                <label class="mcq-option"><input type="radio" name="mc3" value="A"> A. Verdadero [cite: 97]</label>
-                <label class="mcq-option"><input type="radio" name="mc3" value="B"> B. Falso [cite: 98]</label>
-            </div>
-
-            <div class="question" id="q_mc4">
-                <label>4. Este tipo de fobia incluye un temor marcado y persistente excesivo e irracional a un objeto o situación, con una duración de los menos 6 meses. [cite: 104, 105]</label>
-                <label class="mcq-option"><input type="radio" name="mc4" value="A"> A. FOBIA ESPECIFICA. [cite: 106]</label>
-                <label class="mcq-option"><input type="radio" name="mc4" value="B"> B. FOBIA SOCIAL [cite: 107]</label>
-                <label class="mcq-option"><input type="radio" name="mc4" value="C"> C. A Y B SON CORRECTAS [cite: 108]</label>
-            </div>
-        </div>
-
-        <button type="button" class="btn-submit" onclick="evaluarRespuestas()">Evaluar Respuestas Objetivas</button>
-        <div id="resultadoFinal" class="result"></div>
-    </form>
-
-    <script>
-        function toggleJustification(id, radioBtn) {
-            const textArea = document.getElementById(id);
-            if (radioBtn.value === 'F') {
-                textArea.style.display = 'block';
-            } else {
-                textArea.style.display = 'none';
-            }
-        }
-
-        function evaluarRespuestas() {
-            // Clave de respuestas sugerida (basada en principios médicos generales)
-            const respuestasCorrectas = {
-                'vf1': 'V',
-                'vf2': 'V',
-                'vf3': 'V',
-                'mc1': 'A',
-                'mc2': 'B',
-                'mc3': 'A',
-                'mc4': 'A'
-            };
-
-            let puntaje = 0;
-            let total = Object.keys(respuestasCorrectas).length;
-
-            for (let name in respuestasCorrectas) {
-                const opciones = document.getElementsByName(name);
-                let respondido = false;
-                
-                for (let op of opciones) {
-                    if (op.checked) {
-                        respondido = true;
-                        const questionDiv = document.getElementById('q_' + name);
-                        
-                        if (op.value === respuestasCorrectas[name]) {
-                            puntaje++;
-                            questionDiv.style.borderLeft = "5px solid #27ae60";
-                            questionDiv.style.paddingLeft = "10px";
-                        } else {
-                            questionDiv.style.borderLeft = "5px solid #c0392b";
-                            questionDiv.style.paddingLeft = "10px";
-                        }
-                    }
-                }
-            }
-
-            const resultadoDiv = document.getElementById('resultadoFinal');
-            resultadoDiv.style.display = 'block';
-            resultadoDiv.style.backgroundColor = puntaje > (total/2) ? '#d4edda' : '#f8d7da';
-            resultadoDiv.style.color = puntaje > (total/2) ? '#155724' : '#721c24';
-            resultadoDiv.innerHTML = `Puntuación de la sección objetiva: ${puntaje} de ${total} correctas.<br><small>Revisa tus justificaciones y campos de texto abierto directamente con tu bibliografía de referencia.</small>`;
-        }
-    </script>
 </body>
 </html>
