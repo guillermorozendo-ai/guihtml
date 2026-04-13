@@ -1,0 +1,274 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans); }
+#quiz-root { padding: 1.5rem 0; max-width: 700px; margin: 0 auto; }
+.progress-bar-bg { background: var(--color-background-secondary); border-radius: 99px; height: 6px; margin-bottom: 1.5rem; }
+.progress-bar-fill { background: #534AB7; border-radius: 99px; height: 6px; transition: width 0.4s ease; }
+.meta { display: flex; justify-content: space-between; font-size: 13px; color: var(--color-text-secondary); margin-bottom: 0.5rem; }
+.question-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1.5rem; margin-bottom: 1rem; }
+.question-text { font-size: 16px; font-weight: 500; color: var(--color-text-primary); line-height: 1.6; margin-bottom: 1.25rem; }
+.option-btn { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 0.75rem 1rem; margin-bottom: 8px; cursor: pointer; font-size: 14px; color: var(--color-text-primary); transition: background 0.15s, border-color 0.15s; }
+.option-btn:hover:not(:disabled) { background: var(--color-background-tertiary); border-color: var(--color-border-secondary); }
+.option-btn.correct { background: #EAF3DE; border-color: #639922; color: #27500A; }
+.option-btn.wrong { background: #FCEBEB; border-color: #A32D2D; color: #501313; }
+.option-letter { font-weight: 500; font-size: 13px; min-width: 20px; color: var(--color-text-secondary); }
+.option-btn.correct .option-letter { color: #27500A; }
+.option-btn.wrong .option-letter { color: #501313; }
+.feedback-box { border-radius: var(--border-radius-md); padding: 0.75rem 1rem; font-size: 14px; margin-top: 0.75rem; line-height: 1.5; }
+.feedback-box.correct { background: #EAF3DE; color: #27500A; border: 0.5px solid #639922; }
+.feedback-box.wrong { background: #FCEBEB; color: #501313; border: 0.5px solid #A32D2D; }
+.nav-row { display: flex; justify-content: flex-end; margin-top: 1rem; }
+.btn-next { background: #534AB7; color: white; border: none; border-radius: var(--border-radius-md); padding: 0.6rem 1.4rem; font-size: 14px; font-weight: 500; cursor: pointer; }
+.btn-next:hover { background: #3C3489; }
+.section-badge { display: inline-block; font-size: 12px; padding: 3px 10px; border-radius: 99px; margin-bottom: 1rem; font-weight: 500; }
+.badge-mc { background: #EEEDFE; color: #534AB7; }
+.badge-tf { background: #E1F5EE; color: #0F6E56; }
+.badge-fill { background: #FAEEDA; color: #854F0B; }
+.results-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 2rem; text-align: center; }
+.score-big { font-size: 52px; font-weight: 500; color: #534AB7; line-height: 1; margin: 1rem 0; }
+.score-label { font-size: 14px; color: var(--color-text-secondary); }
+.result-message { font-size: 16px; font-weight: 500; color: var(--color-text-primary); margin: 0.75rem 0 1.5rem; }
+.stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 1.5rem 0; }
+.stat-box { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 1rem; }
+.stat-num { font-size: 24px; font-weight: 500; }
+.stat-lbl { font-size: 12px; color: var(--color-text-secondary); margin-top: 2px; }
+.stat-box.good .stat-num { color: #3B6D11; }
+.stat-box.bad .stat-num { color: #A32D2D; }
+.stat-box.neutral .stat-num { color: #534AB7; }
+.btn-restart { background: var(--color-background-primary); border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); padding: 0.6rem 1.4rem; font-size: 14px; cursor: pointer; color: var(--color-text-primary); margin-right: 8px; }
+.btn-restart:hover { background: var(--color-background-secondary); }
+.section-header { font-size: 13px; font-weight: 500; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin: 1.5rem 0 0.75rem; }
+.tf-row { display: flex; gap: 10px; }
+.tf-btn { flex: 1; padding: 0.75rem; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-tertiary); background: var(--color-background-secondary); font-size: 15px; font-weight: 500; cursor: pointer; color: var(--color-text-primary); transition: background 0.15s; }
+.tf-btn:hover:not(:disabled) { background: var(--color-background-tertiary); }
+.tf-btn.correct { background: #EAF3DE; border-color: #639922; color: #27500A; }
+.tf-btn.wrong { background: #FCEBEB; border-color: #A32D2D; color: #501313; }
+.fill-input { width: 100%; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); padding: 0.6rem 0.9rem; font-size: 15px; background: var(--color-background-primary); color: var(--color-text-primary); margin-bottom: 10px; }
+.fill-input:focus { outline: none; border-color: #534AB7; }
+.btn-check { background: #534AB7; color: white; border: none; border-radius: var(--border-radius-md); padding: 0.6rem 1.2rem; font-size: 14px; cursor: pointer; }
+.btn-check:hover { background: #3C3489; }
+</style>
+
+<div id="quiz-root">
+  <div class="meta">
+    <span id="q-counter">Pregunta 1 de 20</span>
+    <span id="q-score">Puntuación: 0</span>
+  </div>
+  <div class="progress-bar-bg"><div class="progress-bar-fill" id="progress-bar" style="width:5%"></div></div>
+  <div id="question-area"></div>
+</div>
+
+<script>
+const ALL_QUESTIONS = [
+  { type:'mc', section:'Opción múltiple', q:'¿Cuál de las siguientes ramas se centra en el diagnóstico y tratamiento de trastornos mentales?', opts:['Psicología social','Psicología forense','Psicología clínica','Psicología ambiental'], ans:2 },
+  { type:'mc', section:'Opción múltiple', q:'¿Qué autor fundó el primer laboratorio de psicología experimental en 1879?', opts:['Skinner','Freud','Wundt','Piaget'], ans:2 },
+  { type:'mc', section:'Opción múltiple', q:'El psicoanálisis se basa principalmente en:', opts:['La observación directa','La autorrealización','El inconsciente y los conflictos internos','La conducta observable'], ans:2 },
+  { type:'mc', section:'Opción múltiple', q:'El modelo psicodinámico considera que la personalidad se estructura en:', opts:['Mente, cuerpo y espíritu','Temperamento, carácter y conducta','Cerebro, emociones y entorno','Ello, yo y superyó'], ans:3 },
+  { type:'mc', section:'Opción múltiple', q:'¿Qué método permite establecer relaciones de causa y efecto mediante la manipulación de variables?', opts:['Estudio de caso','Encuesta','Experimentación','Observación'], ans:2 },
+  { type:'mc', section:'Opción múltiple', q:'¿Cuál de los tipos de personalidad según Fromm se considera sano o productivo?', opts:['Mercantil','Productivo','Receptivo','Acumulativo'], ans:1 },
+  { type:'mc', section:'Opción múltiple', q:'La etapa fálica del desarrollo psicosexual según Freud ocurre entre:', opts:['0-1 año','1-3 años','3-6 años','6-12 años'], ans:2 },
+  { type:'mc', section:'Opción múltiple', q:'El mecanismo de defensa que consiste en canalizar impulsos inaceptables hacia actividades socialmente valoradas es:', opts:['Represión','Proyección','Sublimación','Racionalización'], ans:2 },
+  { type:'mc', section:'Opción múltiple', q:'¿Qué corriente psicológica afirma que "el todo es más que la suma de sus partes"?', opts:['Cognitivismo','Conductismo','Gestalt','Humanismo'], ans:2 },
+  { type:'mc', section:'Opción múltiple', q:'¿Cuál de estos no es un mecanismo de defensa?', opts:['Proyección','Evaporación','Racionalización','Represión'], ans:1 },
+  { type:'tf', section:'Verdadero o Falso', q:'La psicología educativa se enfoca en el análisis de crímenes y testimonio legal.', ans:false },
+  { type:'tf', section:'Verdadero o Falso', q:'El funcionalismo se centró en cómo la mente se adapta al entorno.', ans:true },
+  { type:'tf', section:'Verdadero o Falso', q:'El temperamento es adquirido a lo largo de la vida por influencia del entorno.', ans:false },
+  { type:'tf', section:'Verdadero o Falso', q:'La psicología forense aplica principios psicológicos en contextos judiciales.', ans:true },
+  { type:'tf', section:'Verdadero o Falso', q:'El modelo cognitivo considera que los pensamientos y emociones no influyen en la conducta.', ans:false },
+  { type:'tf', section:'Verdadero o Falso', q:'El superyó representa las normas morales interiorizadas.', ans:true },
+  { type:'tf', section:'Verdadero o Falso', q:'El tipo de personalidad "explotador" según Fromm actúa con empatía y cooperación.', ans:false },
+  { type:'tf', section:'Verdadero o Falso', q:'La psicología ambiental estudia la relación del individuo con su entorno físico.', ans:true },
+  { type:'tf', section:'Verdadero o Falso', q:'Freud afirmaba que todos los conflictos se resuelven completamente en la infancia.', ans:false },
+  { type:'tf', section:'Verdadero o Falso', q:'La entrevista es un método cualitativo en la investigación psicológica.', ans:true },
+  { type:'tf', section:'Verdadero o Falso', q:'El método correlacional permite establecer relaciones causales.', ans:false },
+  { type:'tf', section:'Verdadero o Falso', q:'La psicología social estudia la conducta en grupo.', ans:true },
+  { type:'tf', section:'Verdadero o Falso', q:'William James fundó el conductismo.', ans:false },
+  { type:'tf', section:'Verdadero o Falso', q:'El ego actúa según el principio del placer.', ans:false },
+  { type:'tf', section:'Verdadero o Falso', q:'La psicología médica busca integrar aspectos biológicos, psicológicos y sociales.', ans:true },
+  { type:'tf', section:'Verdadero o Falso', q:'El conductismo estudia procesos mentales profundos.', ans:false },
+  { type:'tf', section:'Verdadero o Falso', q:'La personalidad tipo fálica se asocia con perfeccionismo.', ans:false },
+  { type:'tf', section:'Verdadero o Falso', q:'La entrevista es un método de recolección cualitativa.', ans:true },
+  { type:'tf', section:'Verdadero o Falso', q:'La etapa anal del desarrollo psicosexual ocurre entre 1 y 3 años.', ans:true },
+  { type:'tf', section:'Verdadero o Falso', q:'El ello opera bajo el principio de realidad y regula las normas morales.', ans:false },
+  { type:'fill', section:'Completar', q:'La teoría de los _______ desarrollada por Hipócrates explicaba que la salud dependía del equilibrio entre sangre, bilis amarilla, bilis negra y flema.', ans:'cuatro humores', hint:'cuatro humores' },
+  { type:'fill', section:'Completar', q:'En el modelo de Freud, el _______ actúa según el principio de realidad y sirve como mediador entre el ello y el superyó.', ans:'yo', hint:'yo' },
+  { type:'fill', section:'Completar', q:'El tipo de personalidad descrito por Fromm como creativo, independiente y con amor maduro se denomina _______.', ans:'productivo', hint:'productivo' },
+  { type:'fill', section:'Completar', q:'El método de investigación que se basa en la manipulación controlada de variables para establecer relaciones causales se llama _______.', ans:'experimentación', hint:'experimentación' },
+  { type:'fill', section:'Completar', q:'¿Qué autor introdujo el concepto de "condicionamiento operante"?', ans:'skinner', hint:'Skinner' },
+];
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+const QUESTIONS = shuffle(ALL_QUESTIONS).slice(0, 20);
+let current = 0, score = 0, answered = false;
+
+const EXPLANATIONS = {
+  'Psicología clínica': 'La psicología clínica es la rama especializada en el diagnóstico y tratamiento de los trastornos mentales.',
+  'Wundt': 'Wilhelm Wundt fundó el primer laboratorio de psicología experimental en Leipzig en 1879.',
+  'El inconsciente y los conflictos internos': 'El psicoanálisis freudiano postula que la conducta es guiada por procesos inconscientes y conflictos internos.',
+  'Ello, yo y superyó': 'Freud describe la personalidad como compuesta por ello (impulsos), yo (mediador) y superyó (moral).',
+  'Experimentación': 'Solo el método experimental permite establecer relaciones causales gracias a la manipulación y control de variables.',
+  'Productivo': 'Fromm considera el carácter productivo como el único tipo sano: creativo, independiente y capaz de amor maduro.',
+  '3-6 años': 'La etapa fálica ocurre entre los 3 y 6 años, período en que surge el complejo de Edipo/Electra.',
+  'Sublimación': 'La sublimación redirige energía de impulsos inaceptables hacia actividades socialmente valoradas como el arte o la ciencia.',
+  'Gestalt': 'La psicología de la Gestalt propone que percibimos el mundo como un todo organizado, no como suma de partes.',
+  'Evaporación': 'La evaporación no es un mecanismo de defensa; los mecanismos reales incluyen proyección, represión, sublimación, etc.',
+};
+
+function getTFExplanation(q, ans) {
+  const exp = {
+    'La psicología educativa se enfoca en el análisis de crímenes y testimonio legal.': 'Eso describe a la psicología forense. La educativa se ocupa del aprendizaje y procesos educativos.',
+    'El funcionalismo se centró en cómo la mente se adapta al entorno.': 'Correcto. William James, su fundador, estudió las funciones mentales y su adaptación al entorno.',
+    'El temperamento es adquirido a lo largo de la vida por influencia del entorno.': 'Falso. El temperamento tiene base biológica/hereditaria; el carácter sí se moldea por el entorno.',
+    'La psicología forense aplica principios psicológicos en contextos judiciales.': 'Verdadero. Interviene en peritajes, evaluación de imputados, testimonio, etc.',
+    'El modelo cognitivo considera que los pensamientos y emociones no influyen en la conducta.': 'Falso. El modelo cognitivo considera precisamente que pensamientos, emociones y conducta se interrelacionan.',
+    'El superyó representa las normas morales interiorizadas.': 'Verdadero. El superyó es la instancia moral de la personalidad freudiana.',
+    'El tipo de personalidad "explotador" según Fromm actúa con empatía y cooperación.': 'Falso. El explotador toma lo que desea por la fuerza o manipulación, sin empatía.',
+    'La psicología ambiental estudia la relación del individuo con su entorno físico.': 'Verdadero. Analiza cómo el entorno físico afecta el comportamiento y el bienestar.',
+    'Freud afirmaba que todos los conflictos se resuelven completamente en la infancia.': 'Falso. Freud señalaba que los conflictos no resueltos generan fijaciones que persisten en la adultez.',
+    'La entrevista es un método cualitativo en la investigación psicológica.': 'Verdadero. La entrevista permite recolectar datos cualitativos en profundidad.',
+    'El método correlacional permite establecer relaciones causales.': 'Falso. La correlación muestra asociación entre variables, pero solo el experimento permite inferir causalidad.',
+    'La psicología social estudia la conducta en grupo.': 'Verdadero. Analiza cómo la presencia real o imaginada de otros influye en el comportamiento.',
+    'William James fundó el conductismo.': 'Falso. James es padre del funcionalismo. El conductismo fue fundado por John B. Watson.',
+    'El ego actúa según el principio del placer.': 'Falso. El ello actúa por el principio del placer; el yo actúa por el principio de realidad.',
+    'La psicología médica busca integrar aspectos biológicos, psicológicos y sociales.': 'Verdadero. Aplica el modelo biopsicosocial a la atención del paciente.',
+    'El conductismo estudia procesos mentales profundos.': 'Falso. El conductismo rechaza el estudio de la mente y se centra en la conducta observable.',
+    'La personalidad tipo fálica se asocia con perfeccionismo.': 'Falso. El perfeccionismo se asocia al carácter anal. La personalidad fálica se relaciona con exhibicionismo y ambición.',
+    'La entrevista es un método de recolección cualitativa.': 'Verdadero. Permite explorar experiencias y significados en profundidad.',
+    'La etapa anal del desarrollo psicosexual ocurre entre 1 y 3 años.': 'Verdadero. En esta etapa el placer se centra en la zona anal y el control de esfínteres.',
+    'El ello opera bajo el principio de realidad y regula las normas morales.': 'Falso. El ello opera bajo el principio del placer. Es el yo quien opera según la realidad y el superyó quien regula la moral.',
+  };
+  return exp[q] || (ans ? 'Verdadero.' : 'Falso.');
+}
+
+function render() {
+  if (current >= QUESTIONS.length) { renderResults(); return; }
+  const q = QUESTIONS[current];
+  const pct = Math.round(((current) / QUESTIONS.length) * 100);
+  document.getElementById('progress-bar').style.width = Math.max(pct, 3) + '%';
+  document.getElementById('q-counter').textContent = `Pregunta ${current+1} de ${QUESTIONS.length}`;
+  document.getElementById('q-score').textContent = `Puntuación: ${score}`;
+
+  let html = `<span class="section-badge badge-${q.type}">${q.section}</span>`;
+  html += `<div class="question-card">`;
+  html += `<div class="question-text">${q.q}</div>`;
+
+  if (q.type === 'mc') {
+    q.opts.forEach((opt, i) => {
+      const letters = ['a','b','c','d'];
+      html += `<button class="option-btn" onclick="answerMC(${i})" id="opt-${i}"><span class="option-letter">${letters[i]})</span> ${opt}</button>`;
+    });
+  } else if (q.type === 'tf') {
+    html += `<div class="tf-row">
+      <button class="tf-btn" onclick="answerTF(true)" id="tf-true">Verdadero</button>
+      <button class="tf-btn" onclick="answerTF(false)" id="tf-false">Falso</button>
+    </div>`;
+  } else {
+    html += `<input type="text" class="fill-input" id="fill-input" placeholder="Escribe tu respuesta..." onkeydown="if(event.key==='Enter') checkFill()">
+      <button class="btn-check" onclick="checkFill()">Verificar</button>`;
+  }
+
+  html += `<div id="feedback"></div>`;
+  html += `</div>`;
+  html += `<div class="nav-row" id="nav-row" style="display:none"><button class="btn-next" onclick="nextQ()">${current < QUESTIONS.length - 1 ? 'Siguiente →' : 'Ver resultados'}</button></div>`;
+  document.getElementById('question-area').innerHTML = html;
+  answered = false;
+  if (q.type === 'fill') setTimeout(() => { const el = document.getElementById('fill-input'); if(el) el.focus(); }, 100);
+}
+
+function showFeedback(correct, explanation) {
+  const fb = document.getElementById('feedback');
+  fb.innerHTML = `<div class="feedback-box ${correct ? 'correct' : 'wrong'}">${correct ? '✓ Correcto. ' : '✗ Incorrecto. '}${explanation}</div>`;
+  document.getElementById('nav-row').style.display = 'flex';
+  answered = true;
+}
+
+function answerMC(i) {
+  if (answered) return;
+  const q = QUESTIONS[current];
+  const correct = i === q.ans;
+  if (correct) score++;
+  for (let j = 0; j < q.opts.length; j++) {
+    const btn = document.getElementById('opt-' + j);
+    btn.disabled = true;
+    if (j === q.ans) btn.classList.add('correct');
+    else if (j === i && !correct) btn.classList.add('wrong');
+  }
+  const explanation = EXPLANATIONS[q.opts[q.ans]] || `La respuesta correcta es "${q.opts[q.ans]}".`;
+  showFeedback(correct, explanation);
+  document.getElementById('q-score').textContent = `Puntuación: ${score}`;
+}
+
+function answerTF(val) {
+  if (answered) return;
+  const q = QUESTIONS[current];
+  const correct = val === q.ans;
+  if (correct) score++;
+  document.getElementById('tf-true').disabled = true;
+  document.getElementById('tf-false').disabled = true;
+  if (q.ans === true) document.getElementById('tf-true').classList.add('correct');
+  else document.getElementById('tf-true').classList.add('wrong');
+  if (q.ans === false) document.getElementById('tf-false').classList.add('correct');
+  else document.getElementById('tf-false').classList.add('wrong');
+  showFeedback(correct, getTFExplanation(q.q, q.ans));
+  document.getElementById('q-score').textContent = `Puntuación: ${score}`;
+}
+
+function checkFill() {
+  if (answered) return;
+  const q = QUESTIONS[current];
+  const input = document.getElementById('fill-input');
+  if (!input) return;
+  const val = input.value.trim().toLowerCase();
+  const correct = val === q.ans.toLowerCase() || q.ans.toLowerCase().includes(val) && val.length > 2;
+  if (correct) score++;
+  input.disabled = true;
+  document.querySelector('.btn-check').disabled = true;
+  showFeedback(correct, `La respuesta correcta es: "${q.hint}".`);
+  document.getElementById('q-score').textContent = `Puntuación: ${score}`;
+}
+
+function nextQ() {
+  current++;
+  render();
+}
+
+function renderResults() {
+  document.getElementById('progress-bar').style.width = '100%';
+  document.getElementById('q-counter').textContent = `Completado`;
+  document.getElementById('q-score').textContent = `Puntuación final: ${score}`;
+  const pct = Math.round((score / QUESTIONS.length) * 100);
+  let msg = pct >= 85 ? '¡Excelente dominio del tema!' : pct >= 60 ? 'Buen trabajo. ¡Sigue repasando!' : 'Hay áreas por reforzar. ¡Inténtalo de nuevo!';
+  const wrong = QUESTIONS.length - score;
+  document.getElementById('question-area').innerHTML = `
+    <div class="results-card">
+      <div class="score-label">Tu puntuación final</div>
+      <div class="score-big">${pct}%</div>
+      <div class="result-message">${msg}</div>
+      <div class="stats-grid">
+        <div class="stat-box neutral"><div class="stat-num">${QUESTIONS.length}</div><div class="stat-lbl">Preguntas</div></div>
+        <div class="stat-box good"><div class="stat-num">${score}</div><div class="stat-lbl">Correctas</div></div>
+        <div class="stat-box bad"><div class="stat-num">${wrong}</div><div class="stat-lbl">Incorrectas</div></div>
+      </div>
+      <button class="btn-restart" onclick="restart()">Intentar de nuevo</button>
+    </div>`;
+}
+
+function restart() {
+  current = 0; score = 0;
+  const shuffled = shuffle(ALL_QUESTIONS).slice(0, 20);
+  QUESTIONS.length = 0;
+  shuffled.forEach(q => QUESTIONS.push(q));
+  render();
+}
+
+render();
+</script>

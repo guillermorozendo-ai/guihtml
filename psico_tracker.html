@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tracker – Psicología</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f4f0; color: #1a1a1a; min-height: 100vh; }
+
+  .header { background: #fff; border-bottom: 0.5px solid #ddd; padding: 1.25rem 1.5rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; }
+  .header h1 { font-size: 18px; font-weight: 500; }
+  .header span { font-size: 13px; color: #666; }
+
+  .progress-bar-wrap { background: #fff; padding: 1rem 1.5rem; border-bottom: 0.5px solid #ddd; }
+  .progress-label { display: flex; justify-content: space-between; font-size: 13px; color: #555; margin-bottom: 6px; }
+  .bar-outer { height: 8px; background: #e8e7e3; border-radius: 4px; overflow: hidden; }
+  .bar-inner { height: 100%; background: #1D9E75; border-radius: 4px; transition: width 0.4s ease; }
+
+  .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 1rem 1.5rem; background: #f5f4f0; }
+  .stat-card { background: #fff; border-radius: 10px; border: 0.5px solid #ddd; padding: 0.75rem 1rem; text-align: center; }
+  .stat-card .num { font-size: 22px; font-weight: 500; }
+  .stat-card .lbl { font-size: 11px; color: #888; margin-top: 2px; }
+  .num.green { color: #1D9E75; }
+  .num.amber { color: #BA7517; }
+  .num.gray { color: #5F5E5A; }
+
+  .units { padding: 0 1.5rem 2rem; display: flex; flex-direction: column; gap: 1.25rem; }
+
+  .unit-card { background: #fff; border-radius: 12px; border: 0.5px solid #ddd; overflow: hidden; }
+  .unit-header { padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between; cursor: pointer; user-select: none; }
+  .unit-header .unit-title { font-size: 15px; font-weight: 500; }
+  .unit-header .unit-badge { font-size: 12px; color: #fff; border-radius: 6px; padding: 3px 10px; }
+  .badge-u1 { background: #534AB7; }
+  .unit-header .chevron { font-size: 12px; color: #aaa; transition: transform 0.2s; }
+  .unit-header.open .chevron { transform: rotate(180deg); }
+
+  .unit-body { display: none; padding: 0 1.25rem 1rem; border-top: 0.5px solid #eee; }
+  .unit-body.open { display: block; }
+
+  .topic-group { margin-top: 1rem; }
+  .topic-group-title { font-size: 12px; font-weight: 500; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; }
+
+  .topic-item { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 0.5px solid #f0efe9; cursor: pointer; }
+  .topic-item:last-child { border-bottom: none; }
+  .topic-item:hover { background: #fafaf8; margin: 0 -1.25rem; padding-left: 1.25rem; padding-right: 1.25rem; }
+
+  .check-wrap { flex-shrink: 0; margin-top: 1px; }
+  .check-box { width: 18px; height: 18px; border-radius: 4px; border: 1.5px solid #ccc; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+  .check-box.done { background: #1D9E75; border-color: #1D9E75; }
+  .check-box.done::after { content: '✓'; color: #fff; font-size: 11px; font-weight: 600; }
+  .check-box.review { background: #FAC775; border-color: #BA7517; }
+  .check-box.review::after { content: '!'; color: #633806; font-size: 11px; font-weight: 600; }
+
+  .topic-text { flex: 1; }
+  .topic-name { font-size: 14px; font-weight: 400; line-height: 1.4; }
+  .topic-name.done { color: #888; text-decoration: line-through; }
+  .topic-name.review { color: #633806; }
+  .topic-hint { font-size: 12px; color: #aaa; margin-top: 2px; line-height: 1.4; }
+
+  .cycle-btn { flex-shrink: 0; font-size: 11px; color: #bbb; padding: 2px 6px; border: 0.5px solid #e0e0e0; border-radius: 4px; cursor: pointer; white-space: nowrap; }
+  .cycle-btn:hover { border-color: #aaa; color: #666; }
+
+  .legend { display: flex; gap: 16px; padding: 0.75rem 1.5rem; font-size: 12px; color: #666; background: #f5f4f0; flex-wrap: wrap; }
+  .legend-item { display: flex; align-items: center; gap: 5px; }
+  .dot { width: 12px; height: 12px; border-radius: 3px; }
+  .dot-done { background: #1D9E75; }
+  .dot-review { background: #FAC775; border: 1px solid #BA7517; }
+  .dot-pending { background: #fff; border: 1.5px solid #ccc; }
+
+  .footer { text-align: center; padding: 1rem; font-size: 11px; color: #bbb; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Psicología – Tema de Examen</h1>
+  <span id="last-saved">—</span>
+</div>
+
+<div class="progress-bar-wrap">
+  <div class="progress-label">
+    <span>Progreso general</span>
+    <span id="pct-label">0%</span>
+  </div>
+  <div class="bar-outer"><div class="bar-inner" id="main-bar" style="width:0%"></div></div>
+</div>
+
+<div class="stats-row">
+  <div class="stat-card"><div class="num green" id="s-done">0</div><div class="lbl">Dominado</div></div>
+  <div class="stat-card"><div class="num amber" id="s-rev">0</div><div class="lbl">Repasar</div></div>
+  <div class="stat-card"><div class="num gray" id="s-pend">0</div><div class="lbl">Pendiente</div></div>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="dot dot-pending"></div><span>Pendiente</span></div>
+  <div class="legend-item"><div class="dot dot-review"></div><span>Repasar</span></div>
+  <div class="legend-item"><div class="dot dot-done"></div><span>Dominado</span></div>
+  <span style="color:#aaa; margin-left:auto">Clic en el tema para cambiar estado</span>
+</div>
+
+<div class="units" id="units-container"></div>
+
+<div class="footer">Los cambios se guardan automáticamente en este navegador</div>
+
+<script>
+const DATA = [
+  {
+    id: 'u1',
+    title: 'Unidad 1',
+    badge: 'badge-u1',
+    groups: [
+      {
+        title: 'Introducción a la Psicología',
+        topics: [
+          { id: 't1', name: 'Concepto de psicología', hint: 'Definiciones fundamentales' },
+          { id: 't2', name: 'Clasificación y corrientes', hint: 'Corrientes psicológicas y enfoques' },
+          { id: 't3', name: 'Objetivos y escuelas', hint: 'Metas de la psicología y principales escuelas' },
+          { id: 't4', name: 'Tipos de psicología', hint: 'Áreas de aplicación' }
+        ]
+      },
+      {
+        title: 'Trastornos Psicológicos',
+        topics: [
+          { id: 't5', name: 'Definición de trastornos', hint: '¿Qué son los trastornos?' },
+          { id: 't6', name: 'Causas de trastornos', hint: 'Etiología y factores determinantes' }
+        ]
+      },
+      {
+        title: 'Psicoanálisis',
+        topics: [
+          { id: 't7', name: 'Aparato psíquico', hint: 'Ello, yo, superyó' },
+          { id: 't8', name: 'Complejo de Edipo', hint: 'Conceptos freudianos clave' }
+        ]
+      },
+      {
+        title: 'Trastornos Específicos',
+        topics: [
+          { id: 't9', name: 'Trastorno de la personalidad', hint: 'Clasificación: Tipos A, B y C' },
+          { id: 't10', name: 'Trastornos de ansiedad', hint: 'Incluyendo fobias específicas' }
+        ]
+      }
+    ]
+  }
+];
+
+const STORAGE_KEY = 'psico_tracker_v1';
+let state = {};
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    state = raw ? JSON.parse(raw) : {};
+  } catch(e) { state = {}; }
+}
+
+function saveState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    const now = new Date();
+    document.getElementById('last-saved').textContent = 'Guardado ' + now.toLocaleTimeString('es', {hour:'2-digit', minute:'2-digit'});
+  } catch(e) {}
+}
+
+function getTopicState(id) { return state[id] || 'pending'; }
+
+function cycleState(id) {
+  const cur = getTopicState(id);
+  const next = cur === 'pending' ? 'review' : cur === 'review' ? 'done' : 'pending';
+  state[id] = next;
+  saveState();
+  renderAll();
+}
+
+function renderAll() {
+  renderStats();
+  document.querySelectorAll('.topic-item').forEach(item => {
+    const id = item.dataset.id;
+    const s = getTopicState(id);
+    const box = item.querySelector('.check-box');
+    const name = item.querySelector('.topic-name');
+    box.className = 'check-box ' + (s !== 'pending' ? s : '');
+    name.className = 'topic-name ' + (s !== 'pending' ? s : '');
+  });
+}
+
+function renderStats() {
+  let done = 0, rev = 0, pend = 0, total = 0;
+  DATA.forEach(u => u.groups.forEach(g => g.topics.forEach(t => {
+    total++;
+    const s = getTopicState(t.id);
+    if (s === 'done') done++;
+    else if (s === 'review') rev++;
+    else pend++;
+  })));
+  document.getElementById('s-done').textContent = done;
+  document.getElementById('s-rev').textContent = rev;
+  document.getElementById('s-pend').textContent = pend;
+  const pct = Math.round(done / total * 100) || 0;
+  document.getElementById('main-bar').style.width = pct + '%';
+  document.getElementById('pct-label').textContent = pct + '%';
+}
+
+function buildUI() {
+  const container = document.getElementById('units-container');
+  DATA.forEach(unit => {
+    const card = document.createElement('div');
+    card.className = 'unit-card';
+
+    const header = document.createElement('div');
+    header.className = 'unit-header open';
+    header.innerHTML = `
+      <div class="unit-title">${unit.title}</div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span class="unit-badge ${unit.badge}">${unit.id.toUpperCase()}</span>
+        <span class="chevron">▼</span>
+      </div>`;
+    header.addEventListener('click', () => {
+      const body = card.querySelector('.unit-body');
+      header.classList.toggle('open');
+      body.classList.toggle('open');
+    });
+
+    const body = document.createElement('div');
+    body.className = 'unit-body open';
+
+    unit.groups.forEach(group => {
+      const groupDiv = document.createElement('div');
+      groupDiv.className = 'topic-group';
+      groupDiv.innerHTML = `<div class="topic-group-title">${group.title}</div>`;
+
+      group.topics.forEach(topic => {
+        const item = document.createElement('div');
+        item.className = 'topic-item';
+        item.dataset.id = topic.id;
+        item.innerHTML = `
+          <div class="check-wrap"><div class="check-box"></div></div>
+          <div class="topic-text">
+            <div class="topic-name">${topic.name}</div>
+            <div class="topic-hint">${topic.hint}</div>
+          </div>
+          <div class="cycle-btn">cambiar</div>`;
+        item.addEventListener('click', () => cycleState(topic.id));
+        groupDiv.appendChild(item);
+      });
+
+      body.appendChild(groupDiv);
+    });
+
+    card.appendChild(header);
+    card.appendChild(body);
+    container.appendChild(card);
+  });
+}
+
+loadState();
+buildUI();
+renderAll();
+</script>
+</body>
+</html>
